@@ -1,0 +1,27 @@
+{
+  "name": "serverside",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "sls offline start",
+    "start-local": "npm run force-dynamo sls offline start --stage=dev",
+    "force-dynamo": "npm run stop-dynamo && npm run start-dynamo",
+    "start-dynamo": "sudo docker run -d -p 8007:8000 dwmkerr/dynamodb -sharedDb",
+    "stop-dynamo": "docker stop $(docker ps -a -q --filter ancestor=dwmkerr/dynamodb --format=\"{{.ID}}\")"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless-dotenv-plugin": "^3.10.0",
+    "serverless-offline": "^8.3.1"
+  },
+  "dependencies": {
+    "apollo-server-lambda": "^3.5.0",
+    "aws-sdk": "^2.1046.0",
+    "axios": "^0.24.0",
+    "graphql": "^15.8.0",
+    "uuid": "^8.3.2"
+  }
+}

@@ -1,0 +1,13 @@
+create table scripts for local development via aws cli, for the tables in the docker container at port 8000:
+
+aws dynamodb create-table \
+    --table-name User \
+    --attribute-definitions \
+        AttributeName=id,AttributeType=S \
+        AttributeName=username,AttributeType=S \
+    --key-schema \
+        AttributeName=id,KeyType=HASH \
+        AttributeName=username,KeyType=RANGE \
+    --provisioned-throughput \
+        ReadCapacityUnits=1,WriteCapacityUnits=1 \
+    --endpoint-url http://localhost:8000

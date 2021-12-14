@@ -1,0 +1,7 @@
+client/node_modules
+client/dist
+serverside/node_modules
+.env
+serverside/src/keys.js
+
+serverside/src/handler.js
