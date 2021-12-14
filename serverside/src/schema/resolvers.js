@@ -1,6 +1,9 @@
 const {getUsersResolver} = require('./resolverFunctions/getUsers.js')
 const {createUserResolver} = require('./resolverFunctions/createUser.js')
 const AWS = require('aws-sdk')
+const { v4: uuidv4 } = require('uuid');
+const { DynamoDB } = require('aws-sdk');
+
 
 const db = new AWS.DynamoDB.DocumentClient({
   region: "localhost",
@@ -11,11 +14,46 @@ const db = new AWS.DynamoDB.DocumentClient({
 
 const resolvers = {
   Query: {
-    getUsers: getUsersResolver
+    getUsers: getUsersResolver,
+    getTrips: async () => {
+      const tableParams = {
+        TableName: "Trip"
+      };
+      const result = await db.scan(params).promise()
+    
+      console.log(result)
+      return result.item
+    }
 
   },
   Mutation: {
-    createUser: createUserResolver
+    createUser: createUserResolver,
+    createTrip: async (root, {input}) => {
+     
+      const {origin, destination, destinationPois, distance, duration} = input
+      console.log(input)
+      const id = uuidv4()
+      console.log('id', id)
+      const tableParams = {
+        TableName: "Trip",
+        Item: {
+          id,
+          origin,
+          destination,
+          destinationPois,
+          distance,
+          duration
+      }}
+
+      await db.put(tableParams).promise()
+
+      return {
+        id,
+        origin,
+        destination
+      }
+
+    }
   }
 
 }

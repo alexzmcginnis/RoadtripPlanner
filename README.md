@@ -4,15 +4,18 @@ status: beginning of a project to keep track of roadtrips around the US
 
 first, npm install
 
-# frontend: vue
+## frontend: vue
 npm run dev compiles the webpack
 
-# backend: serverless, with AWS lambda
-# database: dynamodb, with GraphQL
+## backend: serverless, with AWS lambda
+
 
 
 make sure to globally install serverless.
-to run offline, you need to create a docker container for the db.  
+
+##  database: dynamodb, with GraphQL
+to run offline, you need to create a docker container for the db. 
+
 sudo docker run -p 8000:8000 amazon/dynamodb-local -jar DynamoDBLocal.jar -inMemory -sharedDb
 
 create any tables in that docker container manually via the aws command line

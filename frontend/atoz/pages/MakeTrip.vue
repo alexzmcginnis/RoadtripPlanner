@@ -8,6 +8,8 @@
     <button @click="getRouteDetails">get route deetz</button>
 
     <button @click="getDestinationPoi">destination points of interest</button>
+    <button @click="saveTrip">save my trip</button>
+
     
 
     <div>
@@ -25,14 +27,17 @@
         </li>
       </ul>
     </div>
-    <button>save trip </button>
+   
 
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+ import {GraphQLClient, gql} from 'graphql-request';
 const baseUri = 'http://localhost:3000/dev'
+ const gqClient  = new GraphQLClient( `${baseUri}/graphql`) //chnage for deployemnet
+
 export default{
   name: "MakeTrip",
   components: {
@@ -72,26 +77,26 @@ export default{
     async getRouteDetails() {
       const origin = `${this.route.origin.city}, ${this.route.origin.state}`
       const destination = `${this.route.destination.city}, ${this.route.destination.state}`
-     const {data }=  await axios.get(`${baseUri}/drivingDistance/${origin}/${destination}`)
-     const parsedData = JSON.parse(data) //ternary for if deployed parsedData = data?
-     
+      const {data }=  await axios.get(`${baseUri}/drivingDistance/${origin}/${destination}`)
+      const parsedData = JSON.parse(data) //ternary for if deployed parsedData = data?
+      
 
-     const tripInfoData = parsedData.rows[0].elements[0]
+      const tripInfoData = parsedData.rows[0].elements[0]
 
-    this.tripInfo.distance = tripInfoData.distance
-    this.tripInfo.duration = tripInfoData.duration
+      this.tripInfo.distance = tripInfoData.distance
+      this.tripInfo.duration = tripInfoData.duration
     
      
     },
     async getDestinationPoi() {
 
-    const destinationPOI = await axios.get(`${baseUri}/pointsOfInterest/${this.route.destination.city}/${this.route.destination.state}/${this.radius}/${this.kind}`)
+      const destinationPOI = await axios.get(`${baseUri}/pointsOfInterest/${this.route.destination.city}/${this.route.destination.state}/${this.radius}/${this.kind}`)
 
 
      const parsedPOI = JSON.parse(destinationPOI.data) //the same if deployed??
      console.log(parsedPOI.features)
 
-     const pOIs= parsedPOI.features.map(feature => {
+      const pOIs= parsedPOI.features.map(feature => {
        return {
          name: feature.properties.name,
          rating: feature.properties.rate,
@@ -102,19 +107,45 @@ export default{
        }
      })
 
-  console.log('pois', pOIs)
-  this.pointsOfInterest = pOIs
+    console.log('pois', pOIs)
+    this.pointsOfInterest = pOIs
 
 
     },
-     togglePoi(item) {
-       item.liked = !item.liked
+    async saveTrip() {
+      console.log('click')
+      const mutation = gql`
+        mutation createTrip($input: TripInput ) {
+          createTrip(input: $input) {
+          id,
+          origin,
+          destination
+         }
+        }
+      `
+      const originString = `${this.route.origin.city}, ${this.route.origin.state}`
+      const destinationString = `${this.route.destination.city}, ${this.route.destination.state}`
+      const likedPoiList = this.likedPois.map(poi => poi.name)
+      const tripInfoObject = {
+        origin: originString,
+        destination: destinationString,
+        distance: this.tripInfo.distance.value,
+        duration: this.tripInfo.duration.value,
+        destinationPois: likedPoiList,
+      }
+      console.log('tio', tripInfoObject)
+      const data = await gqClient.request(mutation, {input: tripInfoObject})
+      console.log('t.i. data', data)
+
+    },
+    togglePoi(item) {
+      item.liked = !item.liked
       const i = this.likedPois.indexOf(item)
       i === - 1 ? this.likedPois.push(item) : this.likedPois.splice(i, 1)
-      //this.likedPois.push(item)
-      
-      console.log(this.likedPois)
-    }
+ 
+    },
+
+    
 
    
     

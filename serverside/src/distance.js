@@ -2,25 +2,9 @@ const {keys} = require('./keys.js')
 const axios = require('axios')
 
 const drivingDistance = async (event) => {
-  //comes with parameters in the path, of origin and destination.  this returns an object with structure like so: 
-  // {
-  //   destination_addresses,
-  //   origin_addresses,
-  //   rows: [
-  //     {elements: [
-  //       {
-  //         distance: {text: 'x,xxx km', value: Number(in meters)}
-  //         duration: {text: '1 day 9 hrs', value: a number 118958 units?},
-  //         status: 'OK'
-  //       }
-  //     ] }
-  //   ], 
-  //   status: 'OK'
-  // }
-
-  //console.log('event', event)
+ 
   const {pathParameters} = event
-  //console.log('params', pathParameters)
+
   
 
 
