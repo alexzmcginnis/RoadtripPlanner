@@ -17,31 +17,25 @@ const resolvers = {
     getUsers: getUsersResolver,
     
     getTrips: async () => {
-      const tableParams = {
+
+      const params = {
         TableName: "Trip"
       };
       const result = await db.scan(params).promise()
-    
-      console.log(result)
-      return result.item
+
+      return result.Items
+
     },
     getUser: async (parent, {id}) => {
-      console.log('get user resolver', id)
-      console.log('id', id, typeof id)
-  
 
      const params = {
       TableName: "User",
         Key: {
          "id": id
-     
    
         }, 
-        
-       
     };
 
-    //console.log(db)
      db.get(params, (err, data) => {
       if(err) {
         console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
@@ -52,13 +46,6 @@ const resolvers = {
        
       }
     })
-
-  //   console.log('result item' , result.Item)
-  //  // const res = (JSON.stringify(result))
-
-  //  // console.log('RESPONSE!' )
-     
-  //     return result.Item
 
     }
 
@@ -72,7 +59,7 @@ const resolvers = {
       const id = uuidv4()
       console.log('id', id)
       const tableParams = {
-        Tid: "Trip",
+        TableName: "Trip",
         Item: {
           id,
           origin,

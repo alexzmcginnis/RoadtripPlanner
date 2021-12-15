@@ -30,20 +30,22 @@
       </ul>
     </div>
    
+   <my-trips ></my-trips>
 
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+ import axios from 'axios'
  import {GraphQLClient, gql} from 'graphql-request';
-const baseUri = 'http://localhost:3000/dev'
+ import MyTrips from '../components/MyTrips.vue';
+ const baseUri = 'http://localhost:3000/dev'
  const gqClient  = new GraphQLClient( `${baseUri}/graphql`) //chnage for deployemnet
 
 export default{
   name: "MakeTrip",
   components: {
-
+    MyTrips
   },
   data() {
     return {
@@ -70,7 +72,8 @@ export default{
       radius: 5000,
       kind: "theatres_and_entertainments",
       pointsOfInterest: [],
-      likedPois: []
+      likedPois: [],
+      allTrips: []
 
     }
   },
@@ -109,7 +112,6 @@ export default{
        }
      })
 
-    console.log('pois', pOIs)
     this.pointsOfInterest = pOIs
 
 
@@ -135,9 +137,9 @@ export default{
         duration: this.tripInfo.duration.value,
         destinationPois: likedPoiList,
       }
-      console.log('tio', tripInfoObject)
+     
       const data = await gqClient.request(mutation, {input: tripInfoObject})
-      console.log('t.i. data', data)
+
 
     },
     togglePoi(item) {
@@ -146,12 +148,28 @@ export default{
       i === - 1 ? this.likedPois.push(item) : this.likedPois.splice(i, 1)
  
     },
+  },
+    async mounted() {
+      // console.log('mounted')
+      // const query = gql`
+      //   query {
+      //     getTrips {
+      //       id
+      //       origin
+      //       destination
+      //       destinationPois
+      //       duration
+      //       distance
+      //     }
+      //   }
+      // `
+      // const getTrips = await gqClient.request(query)
+      // console.log(getTrips)
+      // this.allTrips = getTrips
 
+    }
     
-
-   
-    
-  }
+  
 
 }
 
