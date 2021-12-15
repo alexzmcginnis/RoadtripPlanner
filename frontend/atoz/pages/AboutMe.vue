@@ -1,28 +1,32 @@
 <template>
-  <div>about me
+  <div>
      <NuxtLink to='/MakeTrip'>makeTrip</NuxtLink>
-    <div>{{userInfo.username}}</div>
-    <input type="text" placeholder="username" v-model="userInfo.username" />
-    <input type="text" v-model="userInfo.city" />
-    <input type="text" placeholder="LA" v-model="userInfo.state" />
-    
-    <form > I want to see: 
-      <input type="checkbox" id="entertainment"  value="theatres_and_entertainments" v-model="userInfo.interests" >
-        <label for="entertainment">Theaters and shows</label><br>
-      <input type="checkbox" id="historicalPlaces" value="historical_places" v-model="userInfo.interests" >
-        <label for="historicalPlaces">historic sites</label><br>
-      <input type="checkbox" id="monumentsAndMemorials" value="monuments_and_memorials" v-model="userInfo.interests" >
-        <label for="monumentsAndMemorials">monuments and memorials</label><br><br>
-    </form>
+
+     <h3>Profile</h3>
+
+   
+    <div>
+      <div>username: {{userInfo.username}} </div>
+      <div>city: {{userInfo.city}}</div>
+      <div>state: {{userInfo.state}}</div>
+      <div>interests:
+        <div v-for="interest in userInfo.interests"
+        :key="interest"
+        > {{interestPhrases[interest]}} </div>
+         </div>
+    </div>
 
 
 
  
-
+    <button @click="getUser">get user</button>
     <button @click="submitInfo">submit info</button>
-    <button @click="updateInfo">update info </button>
+    <button @click="toggleEditMode">edit profile</button>
 
-    <button @click="testQuery">test query</button>
+    <update-user-info v-if="editMode" :username="userInfo.username"></update-user-info>
+   
+
+ 
     
   </div>
 </template>
@@ -30,6 +34,8 @@
 <script>
   import axios from 'axios';
   import {GraphQLClient, gql} from 'graphql-request';
+  
+  import UpdateUserInfo from '../components/UpdateUserInfo.vue'
 
   const baseUri = 'http://localhost:3000/dev'
 
@@ -39,7 +45,7 @@
   export default{
     name: "AboutMe",
     components: {
-
+      UpdateUserInfo
     },
     data() {
       return {
@@ -51,9 +57,16 @@
           state: 'LA',
           interests: [],
           
-        }
+        },
+        interestPhrases: {
+          theatres_and_entertainments: 'theatres and shows',
+          monuments_and_memorials: 'monuments and memorials',
+          historical_places: 'historical places'
 
+        },
+        editMode: false,
       }
+      
     },
     methods: {
       async submitInfo() {
@@ -69,24 +82,28 @@
         console.log('data', data)
       },
 
+      async getUser() {
+        const {data} = await axios.get(`${baseUri}/getUser/1`) //for now hardcoded 1 in, this needs to be different after handle authentication. 
+        console.log(data)
+
+
+      },
 
       updateInfo() {
-        
         axios.post(`http://localhost:3000/dev/getAll`, this.userInfo)
       },
-      async testQuery () {
-       
-        const query = gql`
-          query {
-            getUsers {
-              username
-              city
-            }
-          }
-        `
-        const data = await gqClient.request(query)
-        console.log('data', data)
+      toggleEditMode() {
+        this.editMode = !this.editMode
+       //this.editMode = true
       }
+
+    }, 
+    async mounted() {
+        const {data} = await axios.get(`${baseUri}/getUser/1`) //for now hardcoded 1 in, this needs to be different after handle authentication. 
+        console.log(data)
+        const parsedData = JSON.parse(data) //when deployed this may not be necessary?  Lambda proxy v integration?
+        this.userInfo = parsedData
+        
     }
 
   }

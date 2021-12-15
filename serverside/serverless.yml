@@ -74,12 +74,19 @@ functions:
           path: /graphql
           method: any
           cors: true
-  getAll:
-    handler: src/handler.getAll
+  getUser:
+    handler: src/handler.getUser
+    events: 
+      - http:
+          path: getUser/{id}
+          method: get
+          cors: true
+  updateInfo:
+    handler: src/handler.updateInfo
     events:
       - http:
-          path: /getAll
-          method: post
+          path: updateInfo/{id}/{newUsername}
+          method: put
           cors: true
   drivingDistance:
     handler: src/distance.drivingDistance
@@ -95,13 +102,7 @@ functions:
           path: pointsOfInterest/{city}/{state}/{radius}/{kind}
           method: get
           cors: true
-  hello:
-    handler: src/handler.hello
-    events:
-      - http:
-          path: hello
-          method: get
-          cors: true
+
 
 plugins:
   - serverless-offline

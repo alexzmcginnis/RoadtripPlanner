@@ -15,6 +15,7 @@ const db = new AWS.DynamoDB.DocumentClient({
 const resolvers = {
   Query: {
     getUsers: getUsersResolver,
+    
     getTrips: async () => {
       const tableParams = {
         TableName: "Trip"
@@ -23,6 +24,42 @@ const resolvers = {
     
       console.log(result)
       return result.item
+    },
+    getUser: async (parent, {id}) => {
+      console.log('get user resolver', id)
+      console.log('id', id, typeof id)
+  
+
+     const params = {
+      TableName: "User",
+        Key: {
+         "id": id
+     
+   
+        }, 
+        
+       
+    };
+
+    //console.log(db)
+     db.get(params, (err, data) => {
+      if(err) {
+        console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+      } else {
+        console.log('es;tse', data)
+        console.log(data.Item)
+        return data.Item
+       
+      }
+    })
+
+  //   console.log('result item' , result.Item)
+  //  // const res = (JSON.stringify(result))
+
+  //  // console.log('RESPONSE!' )
+     
+  //     return result.Item
+
     }
 
   },
@@ -35,7 +72,7 @@ const resolvers = {
       const id = uuidv4()
       console.log('id', id)
       const tableParams = {
-        TableName: "Trip",
+        Tid: "Trip",
         Item: {
           id,
           origin,

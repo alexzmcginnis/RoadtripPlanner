@@ -15,7 +15,9 @@ const createUserResolver = async(_, args) => {
  
   console.log("create user resolver")
   console.log(args)
-  const {id, username, city, state, interests} = args 
+  const { username, city, state, interests} = args 
+  const id = v4()
+  console.log('id', id)
 
   const tableParams = {
     TableName: "User",

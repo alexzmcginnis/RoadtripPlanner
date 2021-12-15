@@ -1,6 +1,8 @@
 <template>
-  <div> make trip
+  <div> 
 
+<NuxtLink to='/AboutMe'>Profile</NuxtLink>
+<h3>Make a Trip </h3>
     <input type="text" placeholder="origin city" v-model="route.origin.city" />
     <input type="text" placeholder="origin state" v-model="route.origin.state" />
     <input type="text" placeholder="destination city" v-model="route.destination.city"/>

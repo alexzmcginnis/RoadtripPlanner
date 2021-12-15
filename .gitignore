@@ -4,4 +4,3 @@ serverside/node_modules
 .env
 serverside/src/keys.js
 
-serverside/src/handler.js
