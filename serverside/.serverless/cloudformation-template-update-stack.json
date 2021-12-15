@@ -71,10 +71,34 @@
         }
       }
     },
-    "HelloWorldLogGroup": {
+    "GraphqlLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/serverless-dev-helloWorld"
+        "LogGroupName": "/aws/lambda/serverless-dev-graphql"
+      }
+    },
+    "GetUserLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/serverless-dev-getUser"
+      }
+    },
+    "UpdateInfoLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/serverless-dev-updateInfo"
+      }
+    },
+    "DrivingDistanceLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/serverless-dev-drivingDistance"
+      }
+    },
+    "PointsOfInterestLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/serverless-dev-pointsOfInterest"
       }
     },
     "IamRoleLambdaExecution": {
@@ -188,7 +212,31 @@
                   "Resource": [
                     {
                       "Fn::GetAtt": [
-                        "HelloWorldLogGroup",
+                        "GraphqlLogGroup",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "GetUserLogGroup",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "UpdateInfoLogGroup",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "DrivingDistanceLogGroup",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "PointsOfInterestLogGroup",
                         "Arn"
                       ]
                     }
@@ -200,20 +248,44 @@
         ]
       }
     },
-    "HelloWorldLambdaFunction": {
+    "GraphqlLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/serverless/dev/1639098622919-2021-12-10T01:10:22.919Z/serverless.zip"
+          "S3Key": "serverless/serverless/dev/1639583791998-2021-12-15T15:56:31.998Z/serverless.zip"
         },
-        "Handler": "s_helloWorld.handler",
+        "Handler": "s_graphql.handler",
         "Runtime": "nodejs12.x",
-        "FunctionName": "serverless-dev-helloWorld",
+        "FunctionName": "serverless-dev-graphql",
         "MemorySize": 1024,
         "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "User": "serverless-items-dev-user",
+            "Trip": "serverless-items-dev-trip",
+            "iamRoleStatements": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "dynamodb:*",
+                  "s3:*",
+                  "ses:*"
+                ],
+                "Resource": "*"
+              }
+            ],
+            "NODE_ENV": "DEVELOPMENT",
+            "OPEN_TRIP_MAP_KEY": "5ae2e3f221c38a28845f05b65499681d5be90247cfd938692c82cd51",
+            "GOOGLE_MAPS_KEY": "AIzaSyBQgQmMxRAb9cBFHOLMeRPS7w1I1gbFowc",
+            "DISTANCE_API_KEY": "AIzaSyDLTm9IxCWzL8o7kDISRaRGfJA-FHrM0Pk",
+            "GEOCODE_API_KEY": "AIzaSyAP-YcaPOLQ0GeGCEXbmVkOseyC4_MAnjk",
+            "AVIATION_EDGE_API_KEY": "'7b1b59-fcd95b',",
+            "uuid": "8ace2095-26eb-4c32-83bd-1825839eb93c"
+          }
+        },
         "Role": {
           "Fn::GetAtt": [
             "IamRoleLambdaExecution",
@@ -222,17 +294,253 @@
         }
       },
       "DependsOn": [
-        "HelloWorldLogGroup"
+        "GraphqlLogGroup"
       ]
     },
-    "HelloWorldLambdaVersionj5AzHG8VpSvq5t2G6fUXn5YzRnhZ602xsrZ0fP1A": {
+    "GetUserLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/serverless/dev/1639583791998-2021-12-15T15:56:31.998Z/serverless.zip"
+        },
+        "Handler": "s_getUser.handler",
+        "Runtime": "nodejs12.x",
+        "FunctionName": "serverless-dev-getUser",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "User": "serverless-items-dev-user",
+            "Trip": "serverless-items-dev-trip",
+            "iamRoleStatements": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "dynamodb:*",
+                  "s3:*",
+                  "ses:*"
+                ],
+                "Resource": "*"
+              }
+            ],
+            "NODE_ENV": "DEVELOPMENT",
+            "OPEN_TRIP_MAP_KEY": "5ae2e3f221c38a28845f05b65499681d5be90247cfd938692c82cd51",
+            "GOOGLE_MAPS_KEY": "AIzaSyBQgQmMxRAb9cBFHOLMeRPS7w1I1gbFowc",
+            "DISTANCE_API_KEY": "AIzaSyDLTm9IxCWzL8o7kDISRaRGfJA-FHrM0Pk",
+            "GEOCODE_API_KEY": "AIzaSyAP-YcaPOLQ0GeGCEXbmVkOseyC4_MAnjk",
+            "AVIATION_EDGE_API_KEY": "'7b1b59-fcd95b',",
+            "uuid": "8ace2095-26eb-4c32-83bd-1825839eb93c"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "GetUserLogGroup"
+      ]
+    },
+    "UpdateInfoLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/serverless/dev/1639583791998-2021-12-15T15:56:31.998Z/serverless.zip"
+        },
+        "Handler": "s_updateInfo.handler",
+        "Runtime": "nodejs12.x",
+        "FunctionName": "serverless-dev-updateInfo",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "User": "serverless-items-dev-user",
+            "Trip": "serverless-items-dev-trip",
+            "iamRoleStatements": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "dynamodb:*",
+                  "s3:*",
+                  "ses:*"
+                ],
+                "Resource": "*"
+              }
+            ],
+            "NODE_ENV": "DEVELOPMENT",
+            "OPEN_TRIP_MAP_KEY": "5ae2e3f221c38a28845f05b65499681d5be90247cfd938692c82cd51",
+            "GOOGLE_MAPS_KEY": "AIzaSyBQgQmMxRAb9cBFHOLMeRPS7w1I1gbFowc",
+            "DISTANCE_API_KEY": "AIzaSyDLTm9IxCWzL8o7kDISRaRGfJA-FHrM0Pk",
+            "GEOCODE_API_KEY": "AIzaSyAP-YcaPOLQ0GeGCEXbmVkOseyC4_MAnjk",
+            "AVIATION_EDGE_API_KEY": "'7b1b59-fcd95b',",
+            "uuid": "8ace2095-26eb-4c32-83bd-1825839eb93c"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "UpdateInfoLogGroup"
+      ]
+    },
+    "DrivingDistanceLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/serverless/dev/1639583791998-2021-12-15T15:56:31.998Z/serverless.zip"
+        },
+        "Handler": "s_drivingDistance.handler",
+        "Runtime": "nodejs12.x",
+        "FunctionName": "serverless-dev-drivingDistance",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "User": "serverless-items-dev-user",
+            "Trip": "serverless-items-dev-trip",
+            "iamRoleStatements": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "dynamodb:*",
+                  "s3:*",
+                  "ses:*"
+                ],
+                "Resource": "*"
+              }
+            ],
+            "NODE_ENV": "DEVELOPMENT",
+            "OPEN_TRIP_MAP_KEY": "5ae2e3f221c38a28845f05b65499681d5be90247cfd938692c82cd51",
+            "GOOGLE_MAPS_KEY": "AIzaSyBQgQmMxRAb9cBFHOLMeRPS7w1I1gbFowc",
+            "DISTANCE_API_KEY": "AIzaSyDLTm9IxCWzL8o7kDISRaRGfJA-FHrM0Pk",
+            "GEOCODE_API_KEY": "AIzaSyAP-YcaPOLQ0GeGCEXbmVkOseyC4_MAnjk",
+            "AVIATION_EDGE_API_KEY": "'7b1b59-fcd95b',",
+            "uuid": "8ace2095-26eb-4c32-83bd-1825839eb93c"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "DrivingDistanceLogGroup"
+      ]
+    },
+    "PointsOfInterestLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/serverless/dev/1639583791998-2021-12-15T15:56:31.998Z/serverless.zip"
+        },
+        "Handler": "s_pointsOfInterest.handler",
+        "Runtime": "nodejs12.x",
+        "FunctionName": "serverless-dev-pointsOfInterest",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "User": "serverless-items-dev-user",
+            "Trip": "serverless-items-dev-trip",
+            "iamRoleStatements": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "dynamodb:*",
+                  "s3:*",
+                  "ses:*"
+                ],
+                "Resource": "*"
+              }
+            ],
+            "NODE_ENV": "DEVELOPMENT",
+            "OPEN_TRIP_MAP_KEY": "5ae2e3f221c38a28845f05b65499681d5be90247cfd938692c82cd51",
+            "GOOGLE_MAPS_KEY": "AIzaSyBQgQmMxRAb9cBFHOLMeRPS7w1I1gbFowc",
+            "DISTANCE_API_KEY": "AIzaSyDLTm9IxCWzL8o7kDISRaRGfJA-FHrM0Pk",
+            "GEOCODE_API_KEY": "AIzaSyAP-YcaPOLQ0GeGCEXbmVkOseyC4_MAnjk",
+            "AVIATION_EDGE_API_KEY": "'7b1b59-fcd95b',",
+            "uuid": "8ace2095-26eb-4c32-83bd-1825839eb93c"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "PointsOfInterestLogGroup"
+      ]
+    },
+    "GraphqlLambdaVersioni2waZd8x2QuLfYCVIHUa9XoQEbOHsrCqMqd6iVYD7o": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloWorldLambdaFunction"
+          "Ref": "GraphqlLambdaFunction"
         },
-        "CodeSha256": "VKor5SvaBqR/mSivj+fuza/JPD/e+v/49LGrOkPvL9A="
+        "CodeSha256": "vf8hM/+HJ0rWJ4T5CKeovirP/mO/Kz7N8LppGCm3pg4="
+      }
+    },
+    "GetUserLambdaVersionZAoYcVyV2OWpvb8uGRpgyxeYfBkxRurXlJjMW3I7o": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "GetUserLambdaFunction"
+        },
+        "CodeSha256": "vf8hM/+HJ0rWJ4T5CKeovirP/mO/Kz7N8LppGCm3pg4="
+      }
+    },
+    "UpdateInfoLambdaVersionbLB5D7JJ0CY8DmC1n25PVc7DN565MQLHs7iTvubOUw": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "UpdateInfoLambdaFunction"
+        },
+        "CodeSha256": "vf8hM/+HJ0rWJ4T5CKeovirP/mO/Kz7N8LppGCm3pg4="
+      }
+    },
+    "DrivingDistanceLambdaVersionAzx614LZBHz74uK5Hnks8FDGNKIGB2FyVKnuliDwEeI": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "DrivingDistanceLambdaFunction"
+        },
+        "CodeSha256": "vf8hM/+HJ0rWJ4T5CKeovirP/mO/Kz7N8LppGCm3pg4="
+      }
+    },
+    "PointsOfInterestLambdaVersioncxyTkVAXlgqVjETVhs7HYiKP1QICGyQC661ClidyBg8": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "PointsOfInterestLambdaFunction"
+        },
+        "CodeSha256": "vf8hM/+HJ0rWJ4T5CKeovirP/mO/Kz7N8LppGCm3pg4="
       }
     },
     "ApiGatewayRestApi": {
@@ -247,7 +555,7 @@
         "Policy": ""
       }
     },
-    "ApiGatewayResourceHello": {
+    "ApiGatewayResourceGraphql": {
       "Type": "AWS::ApiGateway::Resource",
       "Properties": {
         "ParentId": {
@@ -256,13 +564,226 @@
             "RootResourceId"
           ]
         },
-        "PathPart": "hello",
+        "PathPart": "graphql",
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
       }
     },
-    "ApiGatewayMethodHelloOptions": {
+    "ApiGatewayResourceGetuser": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "getUser",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceGetuserIdVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceGetuser"
+        },
+        "PathPart": "{id}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceUpdateinfo": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "updateInfo",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceUpdateinfoIdVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceUpdateinfo"
+        },
+        "PathPart": "{id}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceUpdateinfoIdVarNewusernameVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceUpdateinfoIdVar"
+        },
+        "PathPart": "{newUsername}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceDrivingdistance": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "drivingDistance",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceDrivingdistanceOriginVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceDrivingdistance"
+        },
+        "PathPart": "{origin}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceDrivingdistanceOriginVarDestinationVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceDrivingdistanceOriginVar"
+        },
+        "PathPart": "{destination}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourcePointsofinterest": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "pointsOfInterest",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourcePointsofinterestCityVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourcePointsofinterest"
+        },
+        "PathPart": "{city}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourcePointsofinterestCityVarStateVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourcePointsofinterestCityVar"
+        },
+        "PathPart": "{state}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourcePointsofinterestCityVarStateVarRadiusVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourcePointsofinterestCityVarStateVar"
+        },
+        "PathPart": "{radius}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourcePointsofinterestCityVarStateVarRadiusVarKindVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourcePointsofinterestCityVarStateVarRadiusVar"
+        },
+        "PathPart": "{kind}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodGraphqlOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceGraphql"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodGetuserIdVarOptions": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
         "AuthorizationType": "NONE",
@@ -300,20 +821,155 @@
           ]
         },
         "ResourceId": {
-          "Ref": "ApiGatewayResourceHello"
+          "Ref": "ApiGatewayResourceGetuserIdVar"
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
       }
     },
-    "ApiGatewayMethodHelloGet": {
+    "ApiGatewayMethodUpdateinfoIdVarNewusernameVarOptions": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
-        "HttpMethod": "GET",
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,PUT'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceUpdateinfoIdVarNewusernameVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodDrivingdistanceOriginVarDestinationVarOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceDrivingdistanceOriginVarDestinationVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodPointsofinterestCityVarStateVarRadiusVarKindVarOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourcePointsofinterestCityVarStateVarRadiusVarKindVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodGraphqlAny": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "ANY",
         "RequestParameters": {},
         "ResourceId": {
-          "Ref": "ApiGatewayResourceHello"
+          "Ref": "ApiGatewayResourceGraphql"
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
@@ -338,7 +994,7 @@
                 ":lambda:path/2015-03-31/functions/",
                 {
                   "Fn::GetAtt": [
-                    "HelloWorldLambdaFunction",
+                    "GraphqlLambdaFunction",
                     "Arn"
                   ]
                 },
@@ -350,10 +1006,194 @@
         "MethodResponses": []
       },
       "DependsOn": [
-        "HelloWorldLambdaPermissionApiGateway"
+        "GraphqlLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1639098611325": {
+    "ApiGatewayMethodGetuserIdVarGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceGetuserIdVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "GetUserLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "GetUserLambdaPermissionApiGateway"
+      ]
+    },
+    "ApiGatewayMethodUpdateinfoIdVarNewusernameVarPut": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "PUT",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceUpdateinfoIdVarNewusernameVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "UpdateInfoLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "UpdateInfoLambdaPermissionApiGateway"
+      ]
+    },
+    "ApiGatewayMethodDrivingdistanceOriginVarDestinationVarGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceDrivingdistanceOriginVarDestinationVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "DrivingDistanceLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "DrivingDistanceLambdaPermissionApiGateway"
+      ]
+    },
+    "ApiGatewayMethodPointsofinterestCityVarStateVarRadiusVarKindVarGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourcePointsofinterestCityVarStateVarRadiusVarKindVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "PointsOfInterestLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "PointsOfInterestLambdaPermissionApiGateway"
+      ]
+    },
+    "ApiGatewayDeployment1639583778822": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -362,16 +1202,172 @@
         "StageName": "dev"
       },
       "DependsOn": [
-        "ApiGatewayMethodHelloOptions",
-        "ApiGatewayMethodHelloGet"
+        "ApiGatewayMethodGraphqlOptions",
+        "ApiGatewayMethodGetuserIdVarOptions",
+        "ApiGatewayMethodUpdateinfoIdVarNewusernameVarOptions",
+        "ApiGatewayMethodDrivingdistanceOriginVarDestinationVarOptions",
+        "ApiGatewayMethodPointsofinterestCityVarStateVarRadiusVarKindVarOptions",
+        "ApiGatewayMethodGraphqlAny",
+        "ApiGatewayMethodGetuserIdVarGet",
+        "ApiGatewayMethodUpdateinfoIdVarNewusernameVarPut",
+        "ApiGatewayMethodDrivingdistanceOriginVarDestinationVarGet",
+        "ApiGatewayMethodPointsofinterestCityVarStateVarRadiusVarKindVarGet"
       ]
     },
-    "HelloWorldLambdaPermissionApiGateway": {
+    "GraphqlLambdaPermissionApiGateway": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
           "Fn::GetAtt": [
-            "HelloWorldLambdaFunction",
+            "GraphqlLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "GetUserLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "GetUserLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "UpdateInfoLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "UpdateInfoLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "DrivingDistanceLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "DrivingDistanceLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "PointsOfInterestLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "PointsOfInterestLambdaFunction",
             "Arn"
           ]
         },
@@ -512,7 +1508,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/serverless/dev/1639098622919-2021-12-10T01:10:22.919Z/custom-resources.zip"
+          "S3Key": "serverless/serverless/dev/1639583791998-2021-12-15T15:56:31.998Z/custom-resources.zip"
         },
         "FunctionName": "serverless-dev-custom-resource-apigw-cw-role",
         "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -530,13 +1526,97 @@
         "IamRoleCustomResourcesLambdaExecution"
       ]
     },
-    "CWLSubFilterHelloWorldLogGroupUsEast2": {
+    "User": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        },
+        "TableName": "serverless-items-dev-user"
+      }
+    },
+    "Trip": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        },
+        "TableName": "serverless-items-dev-trip"
+      }
+    },
+    "CWLSubFilterGraphqlLogGroupUsEast2": {
       "Type": "AWS::Logs::SubscriptionFilter",
       "Properties": {
         "DestinationArn": "arn:aws:logs:us-east-2:802587217904:destination:c63bd5fa-a9da-4e23-8f4d-8164e006aa98#Zgn9nVNLTCwHWqQP3v#serverless#dev",
         "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
         "LogGroupName": {
-          "Ref": "HelloWorldLogGroup"
+          "Ref": "GraphqlLogGroup"
+        }
+      }
+    },
+    "CWLSubFilterGetUserLogGroupUsEast2": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:logs:us-east-2:802587217904:destination:c63bd5fa-a9da-4e23-8f4d-8164e006aa98#Zgn9nVNLTCwHWqQP3v#serverless#dev",
+        "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+        "LogGroupName": {
+          "Ref": "GetUserLogGroup"
+        }
+      }
+    },
+    "CWLSubFilterUpdateInfoLogGroupUsEast2": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:logs:us-east-2:802587217904:destination:c63bd5fa-a9da-4e23-8f4d-8164e006aa98#Zgn9nVNLTCwHWqQP3v#serverless#dev",
+        "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+        "LogGroupName": {
+          "Ref": "UpdateInfoLogGroup"
+        }
+      }
+    },
+    "CWLSubFilterDrivingDistanceLogGroupUsEast2": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:logs:us-east-2:802587217904:destination:c63bd5fa-a9da-4e23-8f4d-8164e006aa98#Zgn9nVNLTCwHWqQP3v#serverless#dev",
+        "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+        "LogGroupName": {
+          "Ref": "DrivingDistanceLogGroup"
+        }
+      }
+    },
+    "CWLSubFilterPointsOfInterestLogGroupUsEast2": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:logs:us-east-2:802587217904:destination:c63bd5fa-a9da-4e23-8f4d-8164e006aa98#Zgn9nVNLTCwHWqQP3v#serverless#dev",
+        "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+        "LogGroupName": {
+          "Ref": "PointsOfInterestLogGroup"
         }
       }
     },
@@ -571,13 +1651,49 @@
         "Name": "sls-serverless-dev-EnterpriseLogAccessIamRole"
       }
     },
-    "HelloWorldLambdaFunctionQualifiedArn": {
+    "GraphqlLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "HelloWorldLambdaVersionj5AzHG8VpSvq5t2G6fUXn5YzRnhZ602xsrZ0fP1A"
+        "Ref": "GraphqlLambdaVersioni2waZd8x2QuLfYCVIHUa9XoQEbOHsrCqMqd6iVYD7o"
       },
       "Export": {
-        "Name": "sls-serverless-dev-HelloWorldLambdaFunctionQualifiedArn"
+        "Name": "sls-serverless-dev-GraphqlLambdaFunctionQualifiedArn"
+      }
+    },
+    "GetUserLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GetUserLambdaVersionZAoYcVyV2OWpvb8uGRpgyxeYfBkxRurXlJjMW3I7o"
+      },
+      "Export": {
+        "Name": "sls-serverless-dev-GetUserLambdaFunctionQualifiedArn"
+      }
+    },
+    "UpdateInfoLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "UpdateInfoLambdaVersionbLB5D7JJ0CY8DmC1n25PVc7DN565MQLHs7iTvubOUw"
+      },
+      "Export": {
+        "Name": "sls-serverless-dev-UpdateInfoLambdaFunctionQualifiedArn"
+      }
+    },
+    "DrivingDistanceLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "DrivingDistanceLambdaVersionAzx614LZBHz74uK5Hnks8FDGNKIGB2FyVKnuliDwEeI"
+      },
+      "Export": {
+        "Name": "sls-serverless-dev-DrivingDistanceLambdaFunctionQualifiedArn"
+      }
+    },
+    "PointsOfInterestLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "PointsOfInterestLambdaVersioncxyTkVAXlgqVjETVhs7HYiKP1QICGyQC661ClidyBg8"
+      },
+      "Export": {
+        "Name": "sls-serverless-dev-PointsOfInterestLambdaFunctionQualifiedArn"
       }
     },
     "ServiceEndpoint": {

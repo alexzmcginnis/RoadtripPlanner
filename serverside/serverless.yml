@@ -29,8 +29,8 @@ provider:
   region: us-east-2
   stage: dev
   environment:
-    User: # ${self:service}-items-${self:provider.stage} # table name
-      Ref: User
+    User: ${self:service}-items-${self:provider.stage}-user # table name
+    Trip: ${self:service}-items-${self:provider.stage}-trip # table name
     iamRoleStatements:
     - Effect: Allow # allow the Lambda to Get and Put Items of this table
       Action:
@@ -52,7 +52,7 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: ${self:provider.environment.User
+        TableName: ${self:provider.environment.User}
     Trip: # define the table
       Type: 'AWS::DynamoDB::Table'
       Properties:
@@ -65,7 +65,7 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: ${self:provider.environment.Trip
+        TableName: ${self:provider.environment.Trip}
 functions:
   graphql:
     handler: src/graphql.handler
