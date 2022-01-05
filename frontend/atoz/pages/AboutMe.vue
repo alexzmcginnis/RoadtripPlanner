@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <v-app>
      <NuxtLink to='/MakeTrip'>makeTrip</NuxtLink>
 
-     <h3>Profile</h3>
+     <v-card>Profile</v-card>
 
    
     <div>
@@ -28,7 +28,7 @@
 
  
     
-  </div>
+  </v-app>
 </template>
 
 <script>

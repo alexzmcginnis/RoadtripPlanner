@@ -1,54 +1,126 @@
 <template>
-  <div> 
+  <v-app> 
 
-<NuxtLink to='/AboutMe'>Profile</NuxtLink>
 <h3>Make a Trip </h3>
-    <input type="text" placeholder="origin city" v-model="route.origin.city" />
-    <input type="text" placeholder="origin state" v-model="route.origin.state" />
-    <input type="text" placeholder="destination city" v-model="route.destination.city"/>
-    <input type="text" placeholder="destination state" v-model="route.destination.state"/>
-    <button @click="getRouteDetails">get route deetz</button>
+  <v-container>
+    <v-row>
+      <v-col cols="12" md="3">
+        <v-text-field solo placeholder="origin city" v-model="route.origin.city" />
+      </v-col>
+       <v-col cols="12" md="3">
+        <v-text-field solo placeholder="origin state" v-model="route.origin.state" />
+      </v-col>
+    </v-row>
+    <v-row>
+    <v-col cols="12" md="3">
+       <v-text-field solo placeholder="destination city" v-model="route.destination.city"/>
+    </v-col>
+      <v-col cols="12" md="3">
+      <v-text-field solo placeholder="destination state" v-model="route.destination.state"/>
+    </v-col>
+  </v-row>
+    
+  </v-container>
+    
+   
+   <v-container>
+     <v-row>
+        
+        <v-col cols="12" md="2">
+          <v-btn  @click="getRouteDetails">get route deetz</v-btn>
+        </v-col>
+        <v-col cols="12" md="2">
+          <v-btn @click="saveTrip">save my trip</v-btn>
+        </v-col>
+        <v-col cols="12" md="2">
+        
+        </v-col>
 
-    <button @click="getDestinationPoi">destination points of interest</button>
-    <button @click="saveTrip">save my trip</button>
+     </v-row>
+   </v-container>
+
+   <div id='chart'></div>
+
+   <h3>Destination Points of Interest: </h3>
+
+    <v-simple-table>
+    <template v-slot:default>
+      <thead>
+       
+        <tr>
+          <th class="text-left">
+            Name
+          </th>
+          <th class="text-left">
+            Rating
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="poi in pointsOfInterest"
+          :key="poi.xid"
+          v-bind:style= "[poi.liked ? {backgroundColor: 'lavender'} : {backgroundColor: 'aliceblue'}]"
+          @click="() => togglePoi(poi)">
+         
+        
+          <td>{{ poi.name}}</td>
+          <td>{{poi.rating }}</td>
+        </tr>
+      </tbody>
+    </template>
+  </v-simple-table>
+
+
+    
+    
+
+
+    
+
+    
 
     
 
     <div>
       <div>{{tripInfo.distance.text}}</div>
+       <div>{{tripInfo.distance.milesValue}} mi </div>
       <div>{{tripInfo.duration.text}}</div>
+      <div>computed fuel small {{smallCar}} </div>
+      <div>computed fuel big {{bigCar}} </div>
     </div>
-    <div>destination points of interest
-      <ul id="pois">
-        <li v-for="poi in pointsOfInterest" 
-          :key="poi.xid" 
-          v-bind:style= "[poi.liked ? {backgroundColor: 'pink'} : {backgroundColor: 'blue'}]"
-          @click="() => togglePoi(poi)">
-            name: {{poi.name}} rating: {{poi.rating}}
-
-        </li>
-      </ul>
-    </div>
+  
    
    <my-trips ></my-trips>
 
-  </div>
+  </v-app>
 </template>
 
 <script>
+import * as d3 from 'd3'; 
  import axios from 'axios'
  import {GraphQLClient, gql} from 'graphql-request';
  import MyTrips from '../components/MyTrips.vue';
+import CreateAboutMe from '../components/CreateAboutMe.vue';
  const baseUri = 'http://localhost:3000/dev'
  const gqClient  = new GraphQLClient( `${baseUri}/graphql`) //chnage for deployemnet
 
 export default{
   name: "MakeTrip",
   components: {
-    MyTrips
+    MyTrips,
+    CreateAboutMe
   },
   data() {
     return {
+      width: 400,
+      height: 400,
+      margin: {
+        top: 20,
+        right: 20,
+        left: 20,
+        right: 20
+      },
       route: {
         origin:{
           city: '',
@@ -62,12 +134,20 @@ export default{
       tripInfo: {
         distance: {
           text: '',
-          value: 0
+          value: 0,
+     
+          milesValue: 0,
         },
         duration: {
           text: '',
           value: 0
         }
+      },
+      vehicle: {
+        small: 33.5, //2021 toyota camry avg(hwy, city)
+        big: 21, //2021 honda ridgeline pickup truck avg(hwy, city)
+        uhaul: 10,
+        tesla: 113 //2021 Tesla model 3 performance awd avg(hwy, city)
       },
       radius: 5000,
       kind: "theatres_and_entertainments",
@@ -90,6 +170,12 @@ export default{
 
       this.tripInfo.distance = tripInfoData.distance
       this.tripInfo.duration = tripInfoData.duration
+      this.tripInfo.distance.milesValue = tripInfoData.distance.value / 1609.34
+
+      this.createChart()
+
+      this.getDestinationPoi()
+      
     
      
     },
@@ -99,7 +185,7 @@ export default{
 
 
      const parsedPOI = JSON.parse(destinationPOI.data) //the same if deployed??
-     console.log(parsedPOI.features)
+     
 
       const pOIs= parsedPOI.features.map(feature => {
        return {
@@ -113,8 +199,6 @@ export default{
      })
 
     this.pointsOfInterest = pOIs
-
-
     },
     async saveTrip() {
       console.log('click')
@@ -139,8 +223,6 @@ export default{
       }
      
       const data = await gqClient.request(mutation, {input: tripInfoObject})
-
-
     },
     togglePoi(item) {
       item.liked = !item.liked
@@ -148,9 +230,93 @@ export default{
       i === - 1 ? this.likedPois.push(item) : this.likedPois.splice(i, 1)
  
     },
+    createChart() {
+      console.log('create chart')
+      const height = 200
+      const width = 400
+      
+      const dataset = [
+        this.tripInfo.distance.milesValue / this.vehicle.small,
+        this.tripInfo.distance.milesValue  / this.vehicle.big,
+        this.tripInfo.distance.milesValue  / this.vehicle.uhaul,
+        this.tripInfo.distance.milesValue  / this.vehicle.tesla
+
+      ]
+      const xScale = d3.scaleLinear()
+        .domain([0, d3.max(dataset)])
+        .range([0, width])
+      
+      const xAxis = d3.axisBottom()
+        .scale(xScale)
+
+       const yScale = d3.scaleLinear()
+          .domain([0, d3.max(dataset)])
+          .range([0, height - 10])
+
+      const yAxis = d3.axisLeft()
+        .scale(yScale)
+
+      
+
+
+      const svg = d3
+        .select("#chart")
+        .append("svg")
+         .attr("width", width)
+         .attr("height", height)
+        // .append("g")
+        //   .attr("transform", `translate(0, ${height})`)
+        //   .call(xAxis)
+        // .append("g")
+        //   .attr("transform", `translate(50, 10)`)
+        //   .call(yAxis)
+        
+       
+
+        const barChart = svg.selectAll('rect')
+        .data(dataset)
+        .enter()
+        .append("rect")
+          .attr("y", (d) => height - yScale(d))
+          .attr("height", (d) => yScale(d))
+          .attr("width", 30)
+          .attr("transform", function (d, i) {
+            const translation = [40 * i, 0]; 
+            return `translate(${translation})`;
+          });
+
+       
+
+        const labels = svg.selectAll('text')
+          .data(dataset)
+          .enter()
+          .append("text")
+            .text((d) => Math.floor(d))
+            .attr("y", (d) => height - yScale(d) - 3)
+            .attr("x", (d, i) => 40 * i)
+
+    }
+  },
+  computed: {
+    smallCar: function() {
+      console.log(this.tripInfo.distance.milesValue)
+        return this.tripInfo.distance.milesValue / this.vehicle.small
+    },
+    bigCar: function() {
+        return this.tripInfo.distance.milesValue  / this.vehicle.big
+    },
+    uhaul:  function() {
+        return this.tripInfo.distance.milesValue  / this.vehicle.uhaul
+    },
+    tesla:  function() {
+        return this.tripInfo.distance.milesValue  / this.vehicle.tesla
+    },
+  
+
   },
     async mounted() {
-      // console.log('mounted')
+       console.log('mounted')
+      
       // const query = gql`
       //   query {
       //     getTrips {
