@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <v-card>
     <h4>My planned trips </h4>
     <div v-for="trip in allTrips"
       :key="trip.id"
 
     >{{trip.origin}} to {{trip.destination}}</div>
-  </div>
+  </v-card>
 
 </template>
 

@@ -51,7 +51,7 @@
       return {
         
         userInfo: {
-          id: '1',  //this needs to be updated--> hardcoded until authentication put in
+          id: 'dc040efa-d229-4699-bc73-9267a3e053ad',  //this needs to be updated--> hardcoded until authentication put in
           username: 'enter username',
           city: 'New Orleans', 
           state: 'LA',
@@ -99,7 +99,7 @@
 
     }, 
     async mounted() {
-        const {data} = await axios.get(`${baseUri}/getUser/18ca6432-f137-4f93-aa38-6f4c7cdd62d5`) //for now hardcoded 1 in, this needs to be different after handle authentication. 
+        const {data} = await axios.get(`${baseUri}/getUser/dc040efa-d229-4699-bc73-9267a3e053ad`) //for now hardcoded 1 in, this needs to be different after handle authentication. 
         console.log(data)
         const parsedData = JSON.parse(data) //when deployed this may not be necessary?  Lambda proxy v integration?
         this.userInfo = parsedData

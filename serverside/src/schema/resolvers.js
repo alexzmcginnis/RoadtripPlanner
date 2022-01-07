@@ -12,6 +12,10 @@ const db = new AWS.DynamoDB.DocumentClient({
   endpoint: "http://localhost:8000"
 });
 
+
+
+
+
 const resolvers = {
   Query: {
     getUsers: getUsersResolver,

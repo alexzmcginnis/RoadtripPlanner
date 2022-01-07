@@ -39,7 +39,51 @@
      </v-row>
    </v-container>
 
-   <div id='chart'></div>
+    <v-container>
+    <v-row><h4>Fuel details (gal)</h4></v-row>
+    <v-row>
+    <v-col cols="12" md=5>
+      <div id='chart'></div>
+    </v-col>
+    <v-col cols="12" md="7">
+   <v-card elevation="2">
+      <v-simple-table>
+      <template v-slot:default>
+        <thead>
+          <tr>
+            <th class="text-left">
+              car type
+            </th>
+            <th class="text-left">
+              Fuel (gal)
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>          
+            <td>Small Car</td>
+            <td>{{smallCar }}</td>
+          </tr>
+           <tr>          
+            <td>Pickup Truck</td>
+            <td>{{bigCar }}</td>
+          </tr>
+           <tr>          
+            <td>Uhaul</td>
+            <td>{{uhaul }}</td>
+          </tr>
+           <tr>          
+            <td>STesla</td>
+            <td>{{tesla }}</td>
+          </tr>
+        </tbody>
+        </template>
+      </v-simple-table>
+    </v-card>
+    </v-col>
+    </v-row>
+    </v-container>
+
 
    <h3>Destination Points of Interest: </h3>
 
@@ -71,26 +115,6 @@
     </template>
   </v-simple-table>
 
-
-    
-    
-
-
-    
-
-    
-
-    
-
-    <div>
-      <div>{{tripInfo.distance.text}}</div>
-       <div>{{tripInfo.distance.milesValue}} mi </div>
-      <div>{{tripInfo.duration.text}}</div>
-      <div>computed fuel small {{smallCar}} </div>
-      <div>computed fuel big {{bigCar}} </div>
-    </div>
-  
-   
    <my-trips ></my-trips>
 
   </v-app>
@@ -231,9 +255,10 @@ export default{
  
     },
     createChart() {
-      console.log('create chart')
+
       const height = 200
       const width = 400
+      const vehicles = ['car', 'truck', 'uhaul', 'tesla']
       
       const dataset = [
         this.tripInfo.distance.milesValue / this.vehicle.small,
@@ -242,98 +267,83 @@ export default{
         this.tripInfo.distance.milesValue  / this.vehicle.tesla
 
       ]
-      const xScale = d3.scaleLinear()
-        .domain([0, d3.max(dataset)])
-        .range([0, width])
-      
+      const xScale = d3.scaleBand()
+        .domain(vehicles.map((d) => d))
+        .rangeRound([0, 150], .2);
+
+      const scale = d3.scaleLinear()
+        .domain([0, 100])
+        .range([0, width - 50])
+
       const xAxis = d3.axisBottom()
         .scale(xScale)
 
+        xAxis.ticks(4)
+        
+        xAxis.tickValues(vehicles)
+
        const yScale = d3.scaleLinear()
           .domain([0, d3.max(dataset)])
-          .range([0, height - 10])
+          .range([0, height - 45])
 
-      const yAxis = d3.axisLeft()
-        .scale(yScale)
+     
 
-      
-
-
+      d3.select("svg").remove()
       const svg = d3
         .select("#chart")
         .append("svg")
          .attr("width", width)
          .attr("height", height)
-        // .append("g")
-        //   .attr("transform", `translate(0, ${height})`)
-        //   .call(xAxis)
-        // .append("g")
-        //   .attr("transform", `translate(50, 10)`)
-        //   .call(yAxis)
-        
-       
+      
 
-        const barChart = svg.selectAll('rect')
+
+      const barChart = svg.selectAll('rect')
+      .data(dataset)
+      .enter()
+      .append("rect")
+        .attr("y", (d) => height - yScale(d))
+        .attr("height", (d) => yScale(d))
+        .attr("width", 30)
+        .attr("fill", "teal")
+        .attr("transform", function (d, i) {
+          const translation = [40 * i, -30]; 
+          return `translate(${translation[0]}, ${translation[1]})`;
+        });
+
+        
+
+      const labels = svg.selectAll('text')
         .data(dataset)
         .enter()
-        .append("rect")
-          .attr("y", (d) => height - yScale(d))
-          .attr("height", (d) => yScale(d))
-          .attr("width", 30)
-          .attr("transform", function (d, i) {
-            const translation = [40 * i, 0]; 
-            return `translate(${translation})`;
-          });
+        .append("text")
+          .text((d) => Math.floor(d))
+          .attr("y", (d) => height - yScale(d) - 30)
+          .attr("x", (d, i) => 40 * i)
 
-       
-
-        const labels = svg.selectAll('text')
-          .data(dataset)
-          .enter()
-          .append("text")
-            .text((d) => Math.floor(d))
-            .attr("y", (d) => height - yScale(d) - 3)
-            .attr("x", (d, i) => 40 * i)
+        const g = svg.append("g")
+        .attr("transform", `translate(0, ${height - 30})`)
+        .call(xAxis)
 
     }
   },
   computed: {
     smallCar: function() {
       console.log(this.tripInfo.distance.milesValue)
-        return this.tripInfo.distance.milesValue / this.vehicle.small
+        return Math.floor(this.tripInfo.distance.milesValue / this.vehicle.small)
     },
     bigCar: function() {
-        return this.tripInfo.distance.milesValue  / this.vehicle.big
+        return Math.floor(this.tripInfo.distance.milesValue  / this.vehicle.big)
     },
     uhaul:  function() {
-        return this.tripInfo.distance.milesValue  / this.vehicle.uhaul
+        return Math.floor(this.tripInfo.distance.milesValue  / this.vehicle.uhaul)
     },
     tesla:  function() {
-        return this.tripInfo.distance.milesValue  / this.vehicle.tesla
+        return Math.floor(this.tripInfo.distance.milesValue  / this.vehicle.tesla)
     },
   
 
   },
-    async mounted() {
-       console.log('mounted')
-      
-      // const query = gql`
-      //   query {
-      //     getTrips {
-      //       id
-      //       origin
-      //       destination
-      //       destinationPois
-      //       duration
-      //       distance
-      //     }
-      //   }
-      // `
-      // const getTrips = await gqClient.request(query)
-      // console.log(getTrips)
-      // this.allTrips = getTrips
 
-    }
     
   
 

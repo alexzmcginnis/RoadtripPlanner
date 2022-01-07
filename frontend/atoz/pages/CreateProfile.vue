@@ -1,10 +1,10 @@
 <template>
-  <div>create profile
+  <v-app>create profile
      <NuxtLink to='/MakeTrip'>makeTrip</NuxtLink>
     <div>{{userInfo.username}}</div>
-    <input type="text" placeholder="username" v-model="userInfo.username" />
-    <input type="text" v-model="userInfo.city" />
-    <input type="text" placeholder="LA" v-model="userInfo.state" />
+    <v-text-field solo placeholder="username" v-model="userInfo.username" />
+    <v-text-field solo v-model="userInfo.city" />
+    <v-text-field  solo placeholder="LA" v-model="userInfo.state" />
     
     <form > I want to see: 
       <input type="checkbox" id="entertainment"  value="theatres_and_entertainments" v-model="userInfo.interests" >
@@ -24,7 +24,7 @@
 
     <button @click="testQuery">test query</button>
     
-  </div>
+  </v-app>
 </template>
 
 <script>

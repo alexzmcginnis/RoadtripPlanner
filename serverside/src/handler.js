@@ -29,8 +29,11 @@ const getUser = async (event) => {
 
 
 const updateInfo = async (event) => {
+
   const {pathParameters} = event;
-  const {id, newUsername} = pathParameters;
+  const { newUsername} = pathParameters;
+  const id = 'dc040efa-d229-4699-bc73-9267a3e053ad'
+  console.log('updateInfo', id, newUsername)
   console.log(event.body)
   const body = JSON.parse(event.body); //this may not be necessary after deploy if have the gateway integration
   const {city, state, interests} = body;
@@ -55,7 +58,7 @@ const updateInfo = async (event) => {
 };
 
   const newStuff = await db.update(params).promise();
-  console.log(newStuff)
+  console.log('new stuff', newStuff)
   return JSON.stringify(newStuff)
 }
 

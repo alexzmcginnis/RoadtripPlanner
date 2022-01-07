@@ -3,4 +3,4 @@ client/dist
 serverside/node_modules
 .env
 serverside/src/keys.js
-
+serverside/.serverless
